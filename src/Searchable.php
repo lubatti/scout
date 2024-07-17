@@ -259,6 +259,11 @@ trait Searchable
 
         return $query->{$whereIn}(
             $this->qualifyColumn($this->getScoutKeyName()), $ids
+        )->orderByRaw(
+            sprintf('FIELD(%s,%s)',
+                $this->qualifyColumn($this->getScoutKeyName()),
+                implode(',', $ids),
+            )
         );
     }
 
