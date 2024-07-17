@@ -237,7 +237,7 @@ trait Searchable
         return $this->queryScoutModelsByIds($builder, $ids)
             ->get()
             ->when(
-                !empty($builder->orders),
+                ! empty($builder->orders),
                 fn ($models) => $models->sortBy(fn ($model) => array_search($model->{$this->getScoutKeyName()}, $ids))
             );
     }
