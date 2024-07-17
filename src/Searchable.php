@@ -234,7 +234,12 @@ trait Searchable
      */
     public function getScoutModelsByIds(Builder $builder, array $ids)
     {
-        return $this->queryScoutModelsByIds($builder, $ids)->get();
+        return $this->queryScoutModelsByIds($builder, $ids)
+            ->get()
+            ->when(
+                !empty($builder->orders),
+                fn ($models) => $models->sortBy(fn ($model) => array_search($model->{$this->getScoutKeyName()}, $ids))
+            );
     }
 
     /**
@@ -259,11 +264,6 @@ trait Searchable
 
         return $query->{$whereIn}(
             $this->qualifyColumn($this->getScoutKeyName()), $ids
-        )->orderByRaw(
-            sprintf('FIELD(%s,%s)',
-                $this->qualifyColumn($this->getScoutKeyName()),
-                implode(',', $ids),
-            )
         );
     }
 
